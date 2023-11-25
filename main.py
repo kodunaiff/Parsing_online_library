@@ -1,6 +1,7 @@
 import requests
 import os
 
+#download books from tululu.org.
 os.makedirs('books', exist_ok=True)
 
 books_id = [1,2,3,4,5,6,7,8,9,10]
