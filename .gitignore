@@ -152,3 +152,8 @@ cython_debug/
 .idea/
 .idea/.name
 books/
+main_2.py
+downl_func.py
+bs4_tutorial.py
+title_p.py
+prov.py
