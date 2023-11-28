@@ -1,4 +1,6 @@
 import os
+from urllib.parse import urljoin
+from urllib.parse import urlsplit
 
 import requests
 from bs4 import BeautifulSoup
@@ -10,8 +12,8 @@ def check_for_redirect(response_id):
         raise requests.exceptions.HTTPError
 
 
-def call_book(book_id):
-    url = f'https://tululu.org/b{book_id}/'
+def call_book(link, book_id):
+    url = f'{link}b{book_id}/'
     response = requests.get(url)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'lxml')
@@ -30,11 +32,31 @@ def download_txt(url, filename, folder='books/'):
         file.write(response.content)
 
 
+def download_image(link, book_id, folder='images/'):
+    url = f'{link}b{book_id}/'
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, 'lxml')
+    image_name = soup.find('div', class_='bookimage').find('img')['src']
+    image_link = urljoin(url, image_name)
+    response_image = requests.get(image_link)
+    response_image.raise_for_status()
+    image_part = urlsplit(image_link)
+    url_parts = image_part.path
+    filename, file_extension = os.path.splitext(url_parts)
+    image_filename = filename.split('/')
+    save_path = os.path.join(f'{folder}{image_filename[-1]}{file_extension}')
+    with open(save_path, 'wb') as file:
+        file.write(response_image.content)
+
+
 os.makedirs('books', exist_ok=True)
+os.makedirs('images', exist_ok=True)
 books_count = 10
 library_books = []
+main_url = "https://tululu.org/"
 for book_id in range(1, books_count + 1):
-    url = "https://tululu.org/txt.php"
+    url = f"{main_url}txt.php"
     payload = {
         'id': f'{book_id}',
     }
@@ -43,8 +65,8 @@ for book_id in range(1, books_count + 1):
 
     try:
         mistake_book = check_for_redirect(response.history)
-        name_b, author_b = call_book(book_id)
+        name_b, author_b = call_book(main_url, book_id)
         download_txt(response.url, name_b)
+        download_image(main_url, book_id)
     except requests.exceptions.HTTPError:
         continue
-
