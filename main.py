@@ -55,13 +55,18 @@ def download_comments(link, book_id):
     response = requests.get(url)
     response.raise_for_status()
     comments = []
+    genres = []
     soup = BeautifulSoup(response.text, 'lxml')
     ing_com = soup.find_all('div', class_='texts')
     for i in ing_com:
         tex = i.find('span').text
         if tex:
             comments.append(tex)
-    return comments
+
+    genres_info = soup.find('span', class_='d_book').find_all('a')
+    for i in genres_info:
+        genres.append(i.text)
+    return comments, genres
 
 
 os.makedirs('books', exist_ok=True)
