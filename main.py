@@ -5,6 +5,7 @@ from urllib.parse import urlsplit
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
+import argparse
 
 
 def check_for_redirect(response_id):
@@ -60,26 +61,55 @@ def parse_book_page(link, book_id):
     return book_information
 
 
-os.makedirs('books', exist_ok=True)
-os.makedirs('images', exist_ok=True)
+def create_parser():
+    parser = argparse.ArgumentParser(
+        description='Скрипт для скачивания книг'
+    )
+    parser.add_argument(
+        '-s',
+        '--start_id',
+        help='введите номер с какой книги скачать',
+        type=int,
+        default=1
+    )
+    parser.add_argument(
+        '-e',
+        '--end_id',
+        help='введите номер до какой книги скачать',
+        type=int,
+        default=10
+    )
+    args = parser.parse_args()
+    start_id = args.start_id
+    end_id = args.end_id
+    return start_id, end_id
 
-books_count = 10
-main_url = "https://tululu.org/"
-for book_id in range(1, books_count + 1):
-    url = f"{main_url}txt.php"
-    payload = {
-        'id': f'{book_id}',
-    }
-    response = requests.get(url, params=payload)
-    response.raise_for_status()
 
-    try:
-        mistake_book = check_for_redirect(response.history)
-        descript_book = parse_book_page(main_url, book_id)
-        book_name = descript_book['book_name']
-        image_link = descript_book['image_link']
-        download_txt(response.url, book_name)
-        download_image(image_link)
+def main():
+    os.makedirs('books', exist_ok=True)
+    os.makedirs('images', exist_ok=True)
+    start_id, end_id = create_parser()
 
-    except requests.exceptions.HTTPError:
-        continue
+    main_url = "https://tululu.org/"
+    for book_id in range(start_id, end_id + 1):
+        url = f"{main_url}txt.php"
+        payload = {
+            'id': f'{book_id}',
+        }
+        response = requests.get(url, params=payload)
+        response.raise_for_status()
+
+        try:
+            check_for_redirect(response.history)
+            descript_book = parse_book_page(main_url, book_id)
+            book_name = descript_book['book_name']
+            image_link = descript_book['image_link']
+            download_txt(response.url, book_name)
+            download_image(image_link)
+
+        except requests.exceptions.HTTPError:
+            continue
+
+
+if __name__ == '__main__':
+    main()
