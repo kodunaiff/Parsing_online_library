@@ -61,7 +61,7 @@ def parse_book_page(link, book_id):
     return book_information
 
 
-def create_parser():
+def create_books_id():
     parser = argparse.ArgumentParser(
         description='Скрипт для скачивания книг'
     )
@@ -88,7 +88,7 @@ def create_parser():
 def main():
     os.makedirs('books', exist_ok=True)
     os.makedirs('images', exist_ok=True)
-    start_id, end_id = create_parser()
+    start_id, end_id = create_books_id()
 
     main_url = "https://tululu.org/"
     for book_id in range(start_id, end_id + 1):
