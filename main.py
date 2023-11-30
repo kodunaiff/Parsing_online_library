@@ -90,9 +90,9 @@ def main():
     os.makedirs('images', exist_ok=True)
     start_id, end_id = create_books_id()
 
-    main_url = "https://tululu.org/"
+    main_url = 'https://tululu.org/'
     for book_id in range(start_id, end_id + 1):
-        url = f"{main_url}txt.php"
+        url = f'{main_url}txt.php'
         payload = {
             'id': f'{book_id}',
         }
