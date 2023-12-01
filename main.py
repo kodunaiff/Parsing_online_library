@@ -6,6 +6,8 @@ import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
 import argparse
+from time import sleep
+import sys
 
 
 def check_for_redirect(response_id):
@@ -106,9 +108,14 @@ def main():
             image_link = descript_book['image_link']
             download_txt(response.url, book_name)
             download_image(image_link)
+            print(f'{book_id}. book downloaded')
 
         except requests.exceptions.HTTPError:
+            print(f'{book_id}. book is missing')
             continue
+        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+            print("Отсутствие соединения, ожидание 5сек...", file=sys.stderr)
+            sleep(5)
 
 
 if __name__ == '__main__':
