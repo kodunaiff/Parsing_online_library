@@ -1,13 +1,13 @@
+import argparse
 import os
+import sys
+from time import sleep
 from urllib.parse import urljoin
 from urllib.parse import urlsplit
 
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
-import argparse
-from time import sleep
-import sys
 
 
 def check_for_redirect(response):
@@ -35,11 +35,8 @@ def download_image(image_link, folder='images/'):
         file.write(response.content)
 
 
-def parse_book_page(link, book_id):
-    url = f'{link}b{book_id}/'
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'lxml')
+def parse_book_page(html_content, url, book_id):
+    soup = BeautifulSoup(html_content, 'lxml')
     book_name, book_author = soup.find('h1').text.split('::')
     image_name = soup.find('div', class_='bookimage').find('img')['src']
     image_link = urljoin(url, image_name)
@@ -92,18 +89,21 @@ def main():
     os.makedirs('images', exist_ok=True)
     start_id, end_id = create_books_id()
 
-    main_url = 'https://tululu.org/'
+    url = 'https://tululu.org/'
     for book_id in range(start_id, end_id + 1):
-        url = f'{main_url}txt.php'
+        download_url = f'{url}txt.php'
         payload = {
             'id': f'{book_id}',
         }
-        response = requests.get(url, params=payload)
+        response = requests.get(download_url, params=payload)
         response.raise_for_status()
+        book_url = f'{url}b{book_id}/'
+        response_book = requests.get(book_url)
+        response_book.raise_for_status()
 
         try:
             check_for_redirect(response.history)
-            characteristic_book = parse_book_page(main_url, book_id)
+            characteristic_book = parse_book_page(response_book.text, url, book_id)
             book_name = characteristic_book['book_name']
             image_link = characteristic_book['image_link']
             download_txt(response.url, book_name)
