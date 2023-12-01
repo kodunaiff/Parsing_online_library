@@ -15,8 +15,7 @@ def check_for_redirect(response):
         raise requests.exceptions.HTTPError
 
 
-def download_txt(url, filename, folder='books/'):
-    response = requests.get(url)
+def download_txt(response, filename, folder='books/'):
     folder = sanitize_filename(folder)
     filename = sanitize_filename(filename)
     save_path = os.path.join(folder, f'{filename}.txt')
@@ -45,7 +44,7 @@ def parse_book_page(response, book_id):
     comments = soup.find_all('div', class_='texts')
     book_comments = [comment.find('span').text for comment in comments]
 
-    characteristics_book = {
+    book = {
         'book_name': f'{book_id}. {book_name.strip()}',
         'book_author': book_author.strip(),
         'book_genres': book_genres,
@@ -53,7 +52,7 @@ def parse_book_page(response, book_id):
         'image_link': image_link,
     }
 
-    return characteristics_book
+    return book
 
 
 def create_books_id():
@@ -99,10 +98,10 @@ def main():
 
         try:
             check_for_redirect(response.history)
-            characteristics_book = parse_book_page(response_book, book_id)
-            book_name = characteristics_book['book_name']
-            image_link = characteristics_book['image_link']
-            download_txt(response.url, book_name)
+            book = parse_book_page(response_book, book_id)
+            book_name = book['book_name']
+            image_link = book['image_link']
+            download_txt(response, book_name)
             download_image(image_link)
             print(f'{book_id}. book downloaded')
 
