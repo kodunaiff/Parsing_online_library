@@ -8,6 +8,7 @@ from urllib.parse import urlsplit
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
+import logging
 
 
 def check_for_redirect(response):
@@ -106,7 +107,7 @@ def main():
             print(f'{book_id}. book downloaded')
 
         except requests.exceptions.HTTPError:
-            print(f'{book_id}. book is missing')
+            logging.warning(f'{book_id}. book is missing'),
             continue
         except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
             print("Отсутствие соединения, ожидание 5сек...", file=sys.stderr)
