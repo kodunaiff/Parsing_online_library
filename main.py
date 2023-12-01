@@ -10,8 +10,8 @@ from time import sleep
 import sys
 
 
-def check_for_redirect(response_id):
-    if response_id:
+def check_for_redirect(response):
+    if response:
         raise requests.exceptions.HTTPError
 
 
@@ -103,9 +103,9 @@ def main():
 
         try:
             check_for_redirect(response.history)
-            descript_book = parse_book_page(main_url, book_id)
-            book_name = descript_book['book_name']
-            image_link = descript_book['image_link']
+            characteristic_book = parse_book_page(main_url, book_id)
+            book_name = characteristic_book['book_name']
+            image_link = characteristic_book['image_link']
             download_txt(response.url, book_name)
             download_image(image_link)
             print(f'{book_id}. book downloaded')
