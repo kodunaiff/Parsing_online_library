@@ -35,11 +35,11 @@ def download_image(image_link, folder='images/'):
         file.write(response.content)
 
 
-def parse_book_page(html_content, url, book_id):
-    soup = BeautifulSoup(html_content, 'lxml')
+def parse_book_page(response, book_id):
+    soup = BeautifulSoup(response.text, 'lxml')
     book_name, book_author = soup.find('h1').text.split('::')
     image_name = soup.find('div', class_='bookimage').find('img')['src']
-    image_link = urljoin(url, image_name)
+    image_link = urljoin(response.url, image_name)
     book_genre = []
     genres = soup.find('span', class_='d_book').find_all('a')
     for genre in genres:
@@ -103,7 +103,7 @@ def main():
 
         try:
             check_for_redirect(response.history)
-            characteristic_book = parse_book_page(response_book.text, url, book_id)
+            characteristic_book = parse_book_page(response_book, book_id)
             book_name = characteristic_book['book_name']
             image_link = characteristic_book['image_link']
             download_txt(response.url, book_name)
