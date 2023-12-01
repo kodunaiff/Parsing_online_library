@@ -45,7 +45,7 @@ def parse_book_page(response, book_id):
     comments = soup.find_all('div', class_='texts')
     book_comments = [comment.find('span').text for comment in comments]
 
-    book_information = {
+    characteristics_book = {
         'book_name': f'{book_id}. {book_name.strip()}',
         'book_author': book_author.strip(),
         'book_genres': book_genres,
@@ -53,7 +53,7 @@ def parse_book_page(response, book_id):
         'image_link': image_link,
     }
 
-    return book_information
+    return characteristics_book
 
 
 def create_books_id():
@@ -99,9 +99,9 @@ def main():
 
         try:
             check_for_redirect(response.history)
-            characteristic_book = parse_book_page(response_book, book_id)
-            book_name = characteristic_book['book_name']
-            image_link = characteristic_book['image_link']
+            characteristics_book = parse_book_page(response_book, book_id)
+            book_name = characteristics_book['book_name']
+            image_link = characteristics_book['image_link']
             download_txt(response.url, book_name)
             download_image(image_link)
             print(f'{book_id}. book downloaded')
