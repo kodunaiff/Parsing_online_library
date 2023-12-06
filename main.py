@@ -12,7 +12,7 @@ from pathvalidate import sanitize_filename
 
 
 def check_for_redirect(response):
-    if response:
+    if response.history:
         raise requests.exceptions.HTTPError
 
 
@@ -96,10 +96,10 @@ def main():
             response = requests.get(download_url, params=payload)
             response.raise_for_status()
             book_url = f'{url}b{book_id}/'
-            response_book = requests.get(book_url)
-            response_book.raise_for_status()
-            check_for_redirect(response.history)
-            book = parse_book_page(response_book, book_id)
+            book_response = requests.get(book_url)
+            book_response.raise_for_status()
+            check_for_redirect(response)
+            book = parse_book_page(book_response, book_id)
             book_name = book['book_name']
             image_link = book['image_link']
             download_txt(response, book_name)
