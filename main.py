@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import sys
 from time import sleep
@@ -8,7 +9,6 @@ from urllib.parse import urlsplit
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
-import logging
 
 
 def check_for_redirect(response):
@@ -91,13 +91,13 @@ def main():
         payload = {
             'id': f'{book_id}',
         }
-        response = requests.get(download_url, params=payload)
-        response.raise_for_status()
-        book_url = f'{url}b{book_id}/'
-        response_book = requests.get(book_url)
-        response_book.raise_for_status()
-
         try:
+
+            response = requests.get(download_url, params=payload)
+            response.raise_for_status()
+            book_url = f'{url}b{book_id}/'
+            response_book = requests.get(book_url)
+            response_book.raise_for_status()
             check_for_redirect(response.history)
             book = parse_book_page(response_book, book_id)
             book_name = book['book_name']
@@ -110,7 +110,7 @@ def main():
             logging.warning(f'{book_id}. book is missing'),
             continue
         except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
-            print("Отсутствие соединения, ожидание 5сек...", file=sys.stderr)
+            print(f"{book_id}. Отсутствие соединения, ожидание 5сек...", file=sys.stderr)
             sleep(5)
 
 
