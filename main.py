@@ -16,6 +16,11 @@ def check_for_redirect(response):
         raise requests.exceptions.HTTPError
 
 
+def check_book_status(response):
+    if response.is_redirect:
+        raise requests.HTTPError
+
+
 def download_txt(response, filename, folder='books/'):
     folder = sanitize_filename(folder)
     filename = sanitize_filename(filename)
@@ -91,14 +96,15 @@ def main():
         payload = {
             'id': f'{book_id}',
         }
-        try:
 
-            response = requests.get(download_url, params=payload)
+        try:
+            response = requests.get(download_url, params=payload, allow_redirects=False)
             response.raise_for_status()
+            check_book_status(response)
             book_url = f'{url}b{book_id}/'
             book_response = requests.get(book_url)
             book_response.raise_for_status()
-            check_for_redirect(response)
+            check_for_redirect(book_response)
             book = parse_book_page(book_response, book_id)
             book_name = book['book_name']
             image_link = book['image_link']
