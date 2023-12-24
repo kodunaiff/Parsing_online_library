@@ -153,7 +153,10 @@ cython_debug/
 .idea/.name
 books/
 main_2.py
+main3.py
+parse_2.py
 downl_func.py
 bs4_tutorial.py
 title_p.py
+library.json
 prov.py
