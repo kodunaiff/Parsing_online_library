@@ -7,18 +7,45 @@ import logging
 import sys
 from time import sleep
 import json
+import argparse
+
+
+def create_pages():
+    parser = argparse.ArgumentParser(
+        description='Скрипт для скачивания книг со страниц по категориям'
+    )
+    parser.add_argument(
+        '-s',
+        '--start_page',
+        help='введите номер, с какой страницы скачать книги',
+        type=int,
+        default=1
+    )
+    parser.add_argument(
+        '-e',
+        '--end_page',
+        help='введите номер, до какой страницы скачиваем книги',
+        type=int,
+        default=2
+    )
+    args = parser.parse_args()
+    start_page = args.start_page
+    end_page = args.end_page
+    return start_page, end_page
+
+
 
 os.makedirs('books', exist_ok=True)
 os.makedirs('images', exist_ok=True)
 
-page_number = 1
-page_number_off = 1
+start_page, end_page = create_pages()
+last_page = max(start_page, end_page)
 library = []
-while page_number <= page_number_off:
-    url = f'https://tululu.org/l55/{page_number}/'
+while start_page <= last_page:
+    url = f'https://tululu.org/l55/{start_page}/'
     response = requests.get(url)
     response.raise_for_status()
-    page_number += 1
+    start_page += 1
     soup = BeautifulSoup(response.text, 'lxml')
     books_selector = 'div.bookimage a'
     books_number = soup.select(books_selector)
