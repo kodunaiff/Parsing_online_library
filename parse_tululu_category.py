@@ -12,19 +12,18 @@ os.makedirs('books', exist_ok=True)
 os.makedirs('images', exist_ok=True)
 
 page_number = 1
-page_number_off = 4
+page_number_off = 1
 library = []
 while page_number <= page_number_off:
     url = f'https://tululu.org/l55/{page_number}/'
-
     response = requests.get(url)
     response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'lxml')
     page_number += 1
-    books_number = soup.find_all('div', class_='bookimage')
-
+    soup = BeautifulSoup(response.text, 'lxml')
+    books_selector = 'div.bookimage a'
+    books_number = soup.select(books_selector)
     for book_number in books_number:
-        book = book_number.find('a')['href']
+        book = book_number['href']
         book_id = book[2:-1]
         book_link = urljoin(url, book)
         book_url = urlsplit(url)
