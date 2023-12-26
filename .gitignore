@@ -140,7 +140,7 @@ dmypy.json
 
 # pytype static type analyzer
 .pytype/
-
+library_folder
 # Cython debug symbols
 cython_debug/
 
@@ -153,6 +153,7 @@ cython_debug/
 .idea/.name
 books/
 main_2.py
+new_parse.py
 main3.py
 parse_2.py
 downl_func.py
