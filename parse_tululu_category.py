@@ -96,10 +96,8 @@ def main():
                 if not skip_imgs:
                     download_image(image_link, f'{library_folder}')
 
-
             except requests.exceptions.HTTPError:
                 logging.warning(f'{book_id}. book is missing')
-
             except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
                 print(f"{book_id}. Отсутствие соединения, ожидание 5сек...", file=sys.stderr)
                 sleep(5)
