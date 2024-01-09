@@ -22,11 +22,11 @@ Python3 должен быть уже установлен. Затем испол
 
 ## Пример запуска кода
 ``` 
-py main.py -s 3 -e 8
+py tululu.py -s 3 -e 8
 
-py main.py --start_id 10 --end_id 100
+py tululu.py --start_id 10 --end_id 100
 
-py main.py
+py tululu.py
 
 py parse_tululu_category.py --start_page 10 --end_page 15
 ```
