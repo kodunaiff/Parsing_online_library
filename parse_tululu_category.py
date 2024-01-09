@@ -64,43 +64,52 @@ def main():
 
     while start_page <= last_page:
         url = f'https://tululu.org/l55/{start_page}/'
-        response = requests.get(url)
-        response.raise_for_status()
         start_page += 1
-        soup = BeautifulSoup(response.text, 'lxml')
-        books_selector = 'div.bookimage a'
-        books_number = soup.select(books_selector)
-        for book_number in books_number:
-            book = book_number['href']
-            book_id = book[2:-1]
-            book_link = urljoin(url, book)
-            book_url = urlsplit(url)
-            download_url = f'https://{book_url.netloc}/txt.php'
-            payload = {
-                'id': f'{book_id}',
-            }
-            try:
-                response_book = requests.get(download_url, params=payload)
-                response_book.raise_for_status()
-                check_for_redirect(response_book)
-                book_response = requests.get(book_link)
-                book_response.raise_for_status()
-                check_for_redirect(book_response)
-                book_characteristic = parse_book_page(book_response, book_id)
-                book_name = book_characteristic['book_name']
-                image_link = book_characteristic['image_link']
-                library.append(book_characteristic)
-                if not skip_txt:
-                    download_txt(response_book, book_name, f'{library_folder}')
-                    print(f'{book_id}. book downloaded')
-                if not skip_imgs:
-                    download_image(image_link, f'{library_folder}')
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            check_for_redirect(response)
+            soup = BeautifulSoup(response.text, 'lxml')
+            books_selector = 'div.bookimage a'
+            books_number = soup.select(books_selector)
+            for book_number in books_number:
+                book = book_number['href']
+                book_id = book[2:-1]
+                book_link = urljoin(url, book)
+                book_url = urlsplit(url)
+                download_url = f'https://{book_url.netloc}/txt.php'
+                payload = {
+                    'id': f'{book_id}',
+                }
 
-            except requests.exceptions.HTTPError:
-                logging.warning(f'{book_id}. book is missing')
-            except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
-                print(f"{book_id}. Отсутствие соединения, ожидание 5сек...", file=sys.stderr)
-                sleep(5)
+                try:
+                    response_book = requests.get(download_url, params=payload)
+                    response_book.raise_for_status()
+                    check_for_redirect(response_book)
+                    book_response = requests.get(book_link)
+                    book_response.raise_for_status()
+                    check_for_redirect(book_response)
+                    book_characteristic = parse_book_page(book_response, book_id)
+                    book_name = book_characteristic['book_name']
+                    image_link = book_characteristic['image_link']
+                    library.append(book_characteristic)
+                    if not skip_txt:
+                        download_txt(response_book, book_name, f'{library_folder}')
+                        print(f'{book_id}. book downloaded')
+                    if not skip_imgs:
+                        download_image(image_link, f'{library_folder}')
+
+                except requests.exceptions.HTTPError:
+                    logging.warning(f'{book_id}. book is missing')
+                except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+                    print(f"{book_id}. Отсутствие соединения, ожидание 5сек...", file=sys.stderr)
+                    sleep(5)
+
+        except requests.exceptions.HTTPError:
+            logging.warning(f'page № {start_page - 1} is missing')
+        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
+            print(f"page № {start_page - 1}. Отсутствие соединения, ожидание 5сек...", file=sys.stderr)
+            sleep(5)
 
     library_json = json.dumps(library, ensure_ascii=False).encode('utf8')
     with open(f"{library_folder}/library.json", "w", encoding='utf8') as my_file:
