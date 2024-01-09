@@ -73,9 +73,9 @@ def main():
             books_selector = 'div.bookimage a'
             books = soup.select(books_selector)
             for book_number in books:
-                book = book_number['href']
-                book_id = book[2:-1]
-                book_link = urljoin(url, book)
+                number = book_number['href']
+                book_id = number[2:-1]
+                book_link = urljoin(url, number)
                 book_url = urlsplit(url)
                 download_url = f'https://{book_url.netloc}/txt.php'
                 payload = {
