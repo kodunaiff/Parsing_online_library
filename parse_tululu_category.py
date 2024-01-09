@@ -9,7 +9,7 @@ from urllib.parse import urljoin, urlsplit
 import requests
 from bs4 import BeautifulSoup
 
-from main import download_txt, download_image, check_for_redirect, parse_book_page
+from tululu import download_txt, download_image, check_for_redirect, parse_book_page
 
 
 def create_pages():
