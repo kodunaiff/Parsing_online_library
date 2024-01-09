@@ -111,9 +111,8 @@ def main():
             print(f"page № {start_page - 1}. Отсутствие соединения, ожидание 5сек...", file=sys.stderr)
             sleep(5)
 
-    library_json = json.dumps(library, ensure_ascii=False).encode('utf8')
-    with open(f"{library_folder}/library.json", "w", encoding='utf8') as my_file:
-        my_file.write(library_json.decode())
+    with open(f"{library_folder}/library.json", "w", encoding='utf8') as file:
+        json.dump(library, file, ensure_ascii=False)
 
 
 if __name__ == '__main__':
