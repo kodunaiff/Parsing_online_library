@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from tululu import download_txt, download_image, check_for_redirect, parse_book_page
 
 
-def create_pages():
+def parse_arguments():
     parser = argparse.ArgumentParser(
         description='Скрипт для скачивания книг со страниц по категориям'
     )
@@ -57,7 +57,7 @@ def create_pages():
 
 
 def main():
-    start_page, end_page, skip_imgs, skip_txt, library_folder = create_pages()
+    start_page, end_page, skip_imgs, skip_txt, library_folder = parse_arguments()
     os.makedirs(f'{library_folder}', exist_ok=True)
     last_page = max(start_page, end_page)
     library = []
