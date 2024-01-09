@@ -71,8 +71,8 @@ def main():
             check_for_redirect(response)
             soup = BeautifulSoup(response.text, 'lxml')
             books_selector = 'div.bookimage a'
-            books_number = soup.select(books_selector)
-            for book_number in books_number:
+            books = soup.select(books_selector)
+            for book_number in books:
                 book = book_number['href']
                 book_id = book[2:-1]
                 book_link = urljoin(url, book)
