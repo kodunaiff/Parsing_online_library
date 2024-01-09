@@ -83,9 +83,9 @@ def main():
                 }
 
                 try:
-                    response_book = requests.get(download_url, params=payload)
-                    response_book.raise_for_status()
-                    check_for_redirect(response_book)
+                    book_response = requests.get(download_url, params=payload)
+                    book_response.raise_for_status()
+                    check_for_redirect(book_response)
                     book_response = requests.get(book_link)
                     book_response.raise_for_status()
                     check_for_redirect(book_response)
@@ -94,7 +94,7 @@ def main():
                     image_link = book_characteristic['image_link']
                     library.append(book_characteristic)
                     if not skip_txt:
-                        download_txt(response_book, book_name, f'{library_folder}')
+                        download_txt(book_response, book_name, f'{library_folder}')
                         print(f'{book_id}. book downloaded')
                     if not skip_imgs:
                         download_image(image_link, f'{library_folder}')
