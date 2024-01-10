@@ -76,14 +76,15 @@ def main():
                 book_link = urljoin(url, number)
                 book_url = urlsplit(url)
                 download_url = f'https://{book_url.netloc}/txt.php'
+
                 payload = {
                     'id': f'{book_id}',
                 }
 
                 try:
-                    book_response = requests.get(download_url, params=payload)
-                    book_response.raise_for_status()
-                    check_for_redirect(book_response)
+                    book_txt_response = requests.get(download_url, params=payload)
+                    book_txt_response.raise_for_status()
+                    check_for_redirect(book_txt_response)
                     book_response = requests.get(book_link)
                     book_response.raise_for_status()
                     check_for_redirect(book_response)
@@ -92,7 +93,7 @@ def main():
                     image_link = book_characteristic['image_link']
                     library.append(book_characteristic)
                     if not skip_txt:
-                        download_txt(book_response, book_name, f'{library_folder}')
+                        download_txt(book_txt_response, book_name, f'{library_folder}')
                         print(f'{book_id}. book downloaded')
                     if not skip_imgs:
                         download_image(image_link, f'{library_folder}')
