@@ -71,11 +71,10 @@ def main():
             books_selector = 'div.bookimage a'
             books = soup.select(books_selector)
             for book in books:
-                book_number = book['href']
-                book_id = book_number[2:-1]
-                book_link = urljoin(url, book_number)
-                book_url = urlsplit(url)
-                download_url = f'https://{book_url.netloc}/txt.php'
+                book_url = book['href']
+                book_id = book_url[2:-1]
+                book_link = urljoin(url, book_url)
+                download_url = 'https://tululu.org/txt.php'
 
                 payload = {
                     'id': f'{book_id}',
