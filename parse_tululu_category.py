@@ -61,7 +61,7 @@ def main():
     os.makedirs(f'{library_folder}', exist_ok=True)
     last_page = max(start_page, end_page)
     library = []
-    for book_page in range(start_page, last_page+1):
+    for book_page in range(start_page, last_page + 1):
         url = f'https://tululu.org/l55/{book_page}/'
         try:
             response = requests.get(url)
@@ -70,10 +70,10 @@ def main():
             soup = BeautifulSoup(response.text, 'lxml')
             books_selector = 'div.bookimage a'
             books = soup.select(books_selector)
-            for book_number in books:
-                number = book_number['href']
-                book_id = number[2:-1]
-                book_link = urljoin(url, number)
+            for book in books:
+                book_number = book['href']
+                book_id = book_number[2:-1]
+                book_link = urljoin(url, book_number)
                 book_url = urlsplit(url)
                 download_url = f'https://{book_url.netloc}/txt.php'
 
