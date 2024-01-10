@@ -38,8 +38,8 @@ def download_image(image_link, folder='images/'):
 def parse_book_page(response, book_id):
     soup = BeautifulSoup(response.text, 'lxml')
     book_name, book_author = soup.select_one('h1').text.split('::')
-    image_name = soup.select_one('div.bookimage img')['src']
-    image_link = urljoin(response.url, image_name)
+    image_url = soup.select_one('div.bookimage img')['src']
+    image_link = urljoin(response.url, image_url)
     genres = soup.select('span.d_book a')
     book_genres = [genre.text for genre in genres]
     comments = soup.select('div.texts span')
