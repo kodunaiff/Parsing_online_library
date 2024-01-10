@@ -61,10 +61,8 @@ def main():
     os.makedirs(f'{library_folder}', exist_ok=True)
     last_page = max(start_page, end_page)
     library = []
-
-    while start_page <= last_page:
-        url = f'https://tululu.org/l55/{start_page}/'
-        start_page += 1
+    for book_page in range(start_page, last_page+1):
+        url = f'https://tululu.org/l55/{book_page}/'
         try:
             response = requests.get(url)
             response.raise_for_status()
