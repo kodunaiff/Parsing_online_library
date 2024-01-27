@@ -46,7 +46,7 @@ def parse_book_page(response, book_id):
     book_comments = [comment.text for comment in comments]
 
     book = {
-        'book_name': f'{book_id}. {book_name.strip()}',
+        'book_name': f'{book_name.strip()}',
         'book_author': book_author.strip(),
         'book_genres': book_genres,
         'book_comments': book_comments,
